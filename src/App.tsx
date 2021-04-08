@@ -83,6 +83,7 @@ const useStyles = makeStyles<Theme, StylesProps>(() => ({
   },
   card: ({ color }) => ({
     minWidth: 256,
+    width: 256,
     borderRadius: 16,
     boxShadow: "none",
     "&:hover": {
@@ -111,6 +112,10 @@ const useStyles = makeStyles<Theme, StylesProps>(() => ({
     marginTop: "2rem",
     fontWeight: 500,
     fontSize: 14,
+    overflow: "hidden",
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
+    wordWrap: "normal",
   },
 }));
 
@@ -142,7 +147,9 @@ const CustomCard = ({
           <Typography className={classes.title} variant={"h2"}>
             {title}
           </Typography>
-          <Typography className={classes.subtitle}>{subtitle}</Typography>
+          <Typography className={classes.subtitle} title={subtitle}>
+            {subtitle}
+          </Typography>
         </CardContent>
       </Card>
     </CardActionArea>
