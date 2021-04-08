@@ -16,7 +16,7 @@
   {
     "title": "apistore",
     "subtitle": "旨在为开发、产品、测试人员提供更优雅的接口管理服务",
-    "image": "https://hellosean1025.github.io/yapi/ydoc/images/dogbg@1x.png",
+    "image": "https://apistore.bnpparibas/assets/images/illu-open-innovation.svg",
     "color": "#1890ff",
     "url": "https://apistore.ainanjing.org.cn/"
   },
