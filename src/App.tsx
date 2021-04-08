@@ -21,7 +21,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import { useFourThreeCardMediaStyles } from "@mui-treasury/styles/cardMedia/fourThree";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 
 const Header = getHeader(styled);
 const CollapseBtn = getCollapseBtn(styled);
@@ -158,11 +158,27 @@ const CustomCard = ({
 
 export const SolidGameCardDemo = memo(function SolidGameCard() {
   const gridStyles = useGridStyles();
+  const [data, setData] = useState<Site[]>();
+
+  useEffect(() => {
+    const run = async () => {
+      try {
+        const response = await fetch(process.env.REACT_APP_DATA_URL as string);
+        const data: Site[] = await response.json();
+        console.log(response, typeof response, data);
+        setData(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    run();
+  }, []);
 
   return (
     <>
       <Grid classes={gridStyles} container spacing={4} wrap="wrap">
-        {site_db.map((site) => (
+        {(data ?? []).map((site) => (
           <Grid key={site.title} item>
             <CustomCard {...site} />
           </Grid>
