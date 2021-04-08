@@ -23,7 +23,7 @@
   {
     "title": "traefik",
     "subtitle": "Traefik is an open-source Edge Router that makes publishing your services a fun and easy experience. It receives requests on behalf of your system and finds out which components are responsible for handling them.",
-    "image": "https://doc.traefik.io/traefik/assets/img/traefik-architecture.png",
+    "image": "https://containous.ghost.io/content/images/size/w1000/2021/02/Local-Kubernetes-Blog@2x.jpg",
     "color": "#110325",
     "url": "http://traefik.ainanjing.org.cn/"
   }
