@@ -1,5 +1,6 @@
 var site_db = [
   {
+    category: '工作',
     title: "Portainer",
     subtitle:
       "Open Source Container Management GUI for Kubernetes, Docker, Swarm",
@@ -8,6 +9,7 @@ var site_db = [
     url: "https://portainer.ainanjing.org.cn/",
   },
   {
+    category: '工作',
     title: "Verdaccio",
     subtitle: "A lightweight open source private npm proxy registry",
     image: "https://verdaccio.org/img/logo/symbol/png/verdaccio-tiny@3x.png",
@@ -15,6 +17,7 @@ var site_db = [
     url: "https://npm.ainanjing.org.cn/",
   },
   {
+    category: '工作',
     title: "apistore",
     subtitle: "旨在为开发、产品、测试人员提供更优雅的接口管理服务",
     image: "https://hellosean1025.github.io/yapi/ydoc/images/dogbg@1x.png",

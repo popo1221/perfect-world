@@ -3,13 +3,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Layout, {
   Root,
   getHeader,
-  getDrawerSidebar,
-  getSidebarTrigger,
-  getSidebarContent,
-  getCollapseBtn,
   getContent,
-  getInsetContainer,
-  getInsetSidebar,
   getInsetFooter,
 } from "@mui-treasury/layout";
 import Color from "color";
@@ -21,13 +15,20 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import { useFourThreeCardMediaStyles } from "@mui-treasury/styles/cardMedia/fourThree";
-import { memo, useEffect, useState } from "react";
+import { ChangeEvent, memo, useEffect, useMemo, useState } from "react";
+import Fuse from "fuse.js";
+import InputBase from "@material-ui/core/InputBase";
+import Search from "@material-ui/icons/Search";
+import { useSearchInputStyles } from "@mui-treasury/styles/input/search";
+
+const fuseOptions = {
+  includeScore: true,
+  // equivalent to `keys: [['author', 'tags', 'value']]`
+  keys: ["title", "subtitle"],
+};
 
 const Header = getHeader(styled);
-const CollapseBtn = getCollapseBtn(styled);
 const Content = getContent(styled);
-const InsetContainer = getInsetContainer(styled);
-const InsetSidebar = getInsetSidebar(styled);
 const InsetFooter = getInsetFooter(styled);
 
 const scheme = Layout();
@@ -156,17 +157,76 @@ const CustomCard = ({
   );
 };
 
-export const SolidGameCardDemo = memo(function SolidGameCard() {
+type SiteFuse = Fuse<Site>;
+
+interface GroupedItem {
+  cat: string;
+  items: Site[];
+}
+
+type GroupedList = GroupedItem[];
+
+interface GroupedProps {
+  list: GroupedList;
+}
+const GroupedCardList = memo(function Grouped({ list }: GroupedProps) {
   const gridStyles = useGridStyles();
-  const [data, setData] = useState<Site[]>();
+  return (
+    <div>
+      {list.map((cat) => (
+        <div key={cat.cat}>
+          <h3 style={{ margin: "40px 0" }}>{cat.cat ?? "未分类"}</h3>
+          <Grid classes={gridStyles} container spacing={4} wrap="wrap">
+            {cat.items.map((item) => (
+              <Grid key={item.title} item>
+                <CustomCard {...item} />
+              </Grid>
+            ))}
+          </Grid>
+        </div>
+      ))}
+    </div>
+  );
+});
+
+function group(data: Site[]): GroupedList {
+  const list: GroupedList = [];
+  data.forEach((item) => {
+    const cat = getCat(item.category);
+    cat.items.push(item);
+  });
+  return list;
+
+  function getCat(cat: string): GroupedItem {
+    const found = list.find((item) => item.cat === cat);
+    if (found) {
+      return found;
+    }
+
+    const newCat = {
+      cat,
+      items: [],
+    } as GroupedItem;
+
+    list.push(newCat);
+    return newCat;
+  }
+}
+
+const SolidGameCardList = memo(function CardList() {
+  const [rawData, setRawData] = useState<Site[]>([]);
+  const [fuse, setFuse] = useState<SiteFuse>();
+  const [kw, setKw] = useState<string>("");
+  const styles = useSearchInputStyles();
+  // const [data, setData] = useState<Site[]>();
 
   useEffect(() => {
     const run = async () => {
       try {
         const response = await fetch(process.env.REACT_APP_DATA_URL as string);
         const data: Site[] = await response.json();
-        console.log(response, typeof response, data);
-        setData(data);
+        setFuse(new Fuse(data, fuseOptions));
+        setRawData(data);
       } catch (err) {
         console.error(err);
       }
@@ -175,16 +235,29 @@ export const SolidGameCardDemo = memo(function SolidGameCard() {
     run();
   }, []);
 
+  const searchResults: Fuse.FuseResult<Site>[] = useMemo(() => {
+    return kw && fuse ? fuse.search(kw) : [];
+  }, [fuse, kw]);
+
+  const grouped = group(
+    kw && fuse ? searchResults.map(({ item }) => item) : rawData
+  );
+
+  const onSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setKw(event.target.value);
+  };
   return (
-    <>
-      <Grid classes={gridStyles} container spacing={4} wrap="wrap">
-        {(data ?? []).map((site) => (
-          <Grid key={site.title} item>
-            <CustomCard {...site} />
-          </Grid>
-        ))}
-      </Grid>
-    </>
+    <div>
+      <div style={{ textAlign: "right" }}>
+        <InputBase
+          classes={styles}
+          placeholder={"搜索..."}
+          startAdornment={<Search />}
+          onChange={onSearchChange}
+        />
+      </div>
+      <GroupedCardList list={grouped} />
+    </div>
   );
 });
 
@@ -211,7 +284,7 @@ const Blog = () => {
                 margin: "40px",
               }}
             >
-              <SolidGameCardDemo />
+              <SolidGameCardList />
             </div>
           </Content>
           <InsetFooter>{/* <FooterMockUp /> */}</InsetFooter>

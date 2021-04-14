@@ -1,6 +1,7 @@
 /// <reference types="react-scripts" />
 
 declare module "@mui-treasury/styles/cardMedia/fourThree";
+declare module "@mui-treasury/styles/input/search";
 
 declare interface Site {
   title: string;
@@ -8,5 +9,6 @@ declare interface Site {
   image: string;
   color: string;
   url: string
+  category: string
 }
 declare var site_db: Site[];
